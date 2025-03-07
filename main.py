@@ -13,7 +13,7 @@ def on_leave(e):
 
 
 
-# Establish MySQL connection
+
 conn = c.connect(
     host="localhost",
     user="root",
@@ -23,16 +23,14 @@ conn = c.connect(
 if conn.is_connected():
     csr = conn.cursor()
 
-    # Check if the database exists
     csr.execute("SHOW DATABASES like 'HospitalManagement'")
     database = csr.fetchone()
     if 'hospitalmanagement' not in database:
         csr.execute("CREATE DATABASE HospitalManagement")
-
-    # Use the database
+    
     csr.execute("USE HospitalManagement")
 
-    # Create tables
+
     csr.execute("""
     CREATE TABLE IF NOT EXISTS DEPT (
         DepID INT PRIMARY KEY,
@@ -94,35 +92,25 @@ else:
     print("Failed to connect to MySQL")
 
 
-# Tkinter GUI
+
 root = tk.Tk()
 root.title("Hospital Management System")
 root.geometry("1900x1080")
 
-# Apply a default theme
 style = ThemedStyle(root)
 style.set_theme("arc")
 
-# Configure styles
 style.configure("TButton", font=("Helvetica", 12), padding=10)
 style.configure("TLabel", font=("Helvetica", 12), padding=5)
 
 
-# root.tk.call("source", "azure.tcl")
-# root.tk.call("set_theme", "dark")
-
-
-
-# Function to close MySQL connection
 def on_closing():
     csr.close()
     conn.close()
     root.destroy()
 
-# Bind the closing event
 root.protocol("WM_DELETE_WINDOW", on_closing)
 
-# Tabs for different functionalities
 tabControl = ttk.Notebook(root)
 tab_patient = ttk.Frame(tabControl)
 tab_doctor = ttk.Frame(tabControl)
@@ -137,7 +125,6 @@ tabControl.add(tab_appointment, text='Appointments')
 tabControl.add(tab_med_record, text='Medical Records')
 tabControl.pack(expand=0, fill="both")
 
-# Patient Information
 def add_patient():
     csr.execute("INSERT INTO PATIENT (PID, F_NAME, L_NAME, DOB, PH) VALUES (%s, %s, %s, %s, %s)",
                 (entry_pid.get(), entry_fname.get(), entry_lname.get(), entry_dob.get(), entry_ph.get()))
@@ -185,7 +172,6 @@ def delete_patient():
 frame_patient = ttk.LabelFrame(tab_patient, text="Patient Information")
 frame_patient.pack(fill="x", padx=10, pady=10)
 
-# Adding search functionality
 ttk.Label(frame_patient, text="Search:").grid(row=0, column=2, padx=5, pady=5)
 search_field_patient = ttk.Combobox(frame_patient, values=["PID", "F_NAME", "L_NAME", "DOB", "PH"], width=10)
 search_field_patient.grid(row=0, column=3, padx=5, pady=5)
@@ -228,7 +214,6 @@ tree_patient.pack(fill="both", expand=True)
 
 ttk.Button(tab_patient, text="View Patients", command=view_patients).pack(pady=10)
 
-# Doctor Information
 def add_doctor():
     csr.execute("INSERT INTO DOCTOR (DID, F_NAME, L_NAME, SPEC, PH) VALUES (%s, %s, %s, %s, %s)",
                 (entry_did.get(), entry_d_fname.get(), entry_d_lname.get(), entry_spec.get(), entry_d_ph.get()))
@@ -276,7 +261,6 @@ def delete_doctor():
 frame_doctor = ttk.LabelFrame(tab_doctor, text="Doctor Information")
 frame_doctor.pack(fill="x", padx=10, pady=10)
 
-# Adding search functionality
 ttk.Label(frame_doctor, text="Search:").grid(row=0, column=2, padx=5, pady=5)
 search_field_doctor = ttk.Combobox(frame_doctor, values=["DID", "F_NAME", "L_NAME", "SPEC", "PH"], width=10)
 search_field_doctor.grid(row=0, column=3, padx=5, pady=5)
@@ -319,7 +303,6 @@ tree_doctor.pack(fill="both", expand=True)
 
 ttk.Button(tab_doctor, text="View Doctors", command=view_doctors).pack(pady=10)
 
-# Department Information
 def add_department():
     csr.execute("INSERT INTO DEPT (DepID, D_NAME, FLOOR, TELEPHONE) VALUES (%s, %s, %s, %s)",
                 (entry_depid.get(), entry_dname.get(), entry_floor.get(), entry_telephone.get()))
@@ -367,7 +350,6 @@ def delete_department():
 frame_dept = ttk.LabelFrame(tab_dept, text="Department Information")
 frame_dept.pack(fill="x", padx=10, pady=10)
 
-# Adding search functionality
 ttk.Label(frame_dept, text="Search:").grid(row=0, column=2, padx=5, pady=5)
 search_field_dept = ttk.Combobox(frame_dept, values=["DEPT_ID", "DEPT_NAME"], width=10)
 search_field_dept.grid(row=0, column=3, padx=5, pady=5)
@@ -405,7 +387,6 @@ tree_dept.pack(fill="both", expand=True)
 
 ttk.Button(tab_dept, text="View Departments", command=view_departments).pack(pady=10)
 
-# Appointment Information
 def add_appointment():
     csr.execute("INSERT INTO APPOINTMENT (AID, PID, DID, A_DATE, A_TIME, DepID) VALUES (%s, %s, %s, %s, %s, %s)",
                 (entry_aid.get(), entry_ap_pid.get(), entry_ap_did.get(), entry_adate.get(), entry_atime.get(), entry_ap_depid.get()))
@@ -413,7 +394,6 @@ def add_appointment():
     messagebox.showinfo("Success", "Appointment added successfully")
     view_appointments()
 
-# Appointment Information
 def view_appointments():
     for row in tree_appointment.get_children():
         tree_appointment.delete(row)
@@ -467,7 +447,6 @@ def delete_appointment():
 frame_appointment = ttk.LabelFrame(tab_appointment, text="Appointment Information")
 frame_appointment.pack(fill="x", padx=10, pady=10)
 
-# Adding search functionality
 ttk.Label(frame_appointment, text="Search:").grid(row=0, column=2, padx=5, pady=5)
 search_field_appointment = ttk.Combobox(frame_appointment, values=["APPT_ID", "PATIENT_ID", "DOCTOR_ID", "DATE", "TIME"], width=10)
 search_field_appointment.grid(row=0, column=3, padx=5, pady=5)
@@ -515,7 +494,7 @@ tree_appointment.pack(fill="both", expand=True)
 
 ttk.Button(tab_appointment, text="View Appointments", command=view_appointments).pack(pady=10)
 
-# Medical Records Information
+
 def add_medical_record():
     csr.execute("INSERT INTO MED_RECORD (RID, PID, DID, LAST_VISIT, DIAGNOSIS) VALUES (%s, %s, %s, %s, %s)",
                 (entry_rid.get(), entry_mr_pid.get(), entry_mr_did.get(), entry_last_visit.get(), entry_diagnosis.get()))
@@ -523,7 +502,6 @@ def add_medical_record():
     messagebox.showinfo("Success", "Medical record added successfully")
     view_medical_records()
 
-# Medical Records Information
 def view_medical_records():
     for row in tree_med_record.get_children():
         tree_med_record.delete(row)
@@ -575,7 +553,6 @@ def delete_medical_record():
 frame_med_record = ttk.LabelFrame(tab_med_record, text="Medical Record Information")
 frame_med_record.pack(fill="x", padx=10, pady=10)
 
-# Adding search functionality
 ttk.Label(frame_med_record, text="Search:").grid(row=0, column=2, padx=5, pady=5)
 search_field_med_record = ttk.Combobox(frame_med_record, values=["RECORD_ID", "PATIENT_ID", "DOCTOR_ID", "DATE", "NOTES"], width=10)
 search_field_med_record.grid(row=0, column=3, padx=5, pady=5)
